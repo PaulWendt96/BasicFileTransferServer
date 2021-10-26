@@ -1,0 +1,69 @@
+0. 
+
+   ISSUE: 
+   The most obvious issue is that opening the files in vim shows a ^M character. 
+   I have verified that this issue is related to how windows interperts newline. 
+   For instance, save the following as newline-issue.py:
+
+   with open('dictionary.txt', 'rb') as file:
+       b = file.read()
+   print(b.decode('utf-8'))
+
+   then run the script with 'python newline-issue.py > outfile'
+
+   opening outfile, you'll see an ^M at the end of each line.
+
+
+   WORKAROUND:
+   pipe the output through sed
+
+   python client.py <some file> | sed s///g > outfile
+
+   note that I inserted the ^M character via ctrl + V + M
+
+
+   FIX:
+   - One potential fix might be to write what we receive from the folder to an output file explicitly.
+
+
+   RESOLUTION:
+
+   I found the following stackoverflow question, which is very helpful:
+
+   https://stackoverflow.com/questions/49709309/prevent-python-prints-automatic-newline-conversion-to-crlf-on-windows
+
+   The author pulls a couple notes straight out of the documentation:
+     - stdout is used for the output of print
+     - sys.stdout is used by the interperter for standard out
+     - these streams are regular text files, just like any other
+     - character encoding on Windows is ANSI
+     - standard streams are block buffered like regular text files
+     - Note: to write of read binary data from/to standard streams, use the underlying binary buffer object
+             for instance, to write bytes to stdout, use sys.stdout.buffer.write(b'')
+
+   Writing to sys.stdout.buffer() instead of print()ing everything solved the issue
+
+
+1.
+
+  ISSUE: 
+  Sometimes incomplete number of bytes are sent. This almost always happens at end of transmission
+
+  WORKAROUND:
+  Break when we socket.recv() less than 4108 bytes
+
+2.
+
+  ISSUE: 
+  Connecting between client and server requires that you turn off local network firewall
+
+  WORKAROUND:
+  Turn off firewall in the control panel
+
+3.
+
+  ISSUE: 
+  socket.send() is not guaranteed to send all the data it is passed in one go
+
+  WORKAROUND
+  use socket.sendall()

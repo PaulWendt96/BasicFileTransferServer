@@ -1,0 +1,5 @@
+0. Add support for directories
+   - I think the way to go here is to create an in-memory tarball of whatever directory the 
+     client is looking for and transmit info that way
+   - To make this as unassuming as possible, I'll send the tarball without any sort of compression.
+1. Add support for multiple files (e.g. "python client.py <options> file [file...]")
